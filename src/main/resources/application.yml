@@ -1,0 +1,48 @@
+spring:
+  liquibase:
+    enabled: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: ddl
+    user: ${db_user}
+    password: ${db_pass}
+    liquibase-schema: plants
+  datasource:
+
+    url: ${db_url}
+    hikari:
+      schema: plants
+    username: ${db_user}
+    password: ${db_pass}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    open-in-view: false
+    generate-ddl: true
+    properties:
+      hibernate:
+        default_schema: plant
+#        show_sql: true
+        format_sql: true
+        event:
+         merge:
+           entity_copy_observer: allow
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: d7efcb220ed43574647a
+            clientSecret: 76d57b58f370bd13c9ed90839941f1eb9ea03f95
+          google:
+            client-id: 566590632436-ued9lmsbkldfc3mgjj8jgupoikk1kvg6.apps.googleusercontent.com
+            client-secret: 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
+logging:
+  level:
+      org.hibernate.SQL: INFO
+      org.hibernate.type: INFO
+  org:
+    springframework:
+     security: DEBUG
+
+  com: TRACE
