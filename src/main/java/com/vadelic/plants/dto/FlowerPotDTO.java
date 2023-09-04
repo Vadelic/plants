@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FlowerPotDTO {
     private Long id;
-    private PlantDTO plantDTO;
-    private LocalDateTime lastWatering;
-    private byte health;
+
+    private String name;
     private byte water;
+    private byte health;
 
 }

@@ -12,50 +12,15 @@
     <script src="/webjars/bootstrap/4.3.1/js/bootstrap.js" type="text/javascript"></script>
     <script src="/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-        $.get("/auth", function (data) {
-            $("#plantator").html(data.attributes.name);
-        });
-    </script>
-
 </head>
 <body>
 
 <div class="container header">
-    <h1>Plantator - <span id="plantator"></span></h1>
+    <h1>Login - <span id="plantator"></span></h1>
     <div>
         <button class="btn btn-primary" onClick='location.href="/logout"'>Logout</button>
     </div>
 </div>
-
-<template id="pot_template">
-    <tr>
-        <td>img</td>
-        <td>name</td>
-        <td></td>
-    </tr>
-</template>
-
-<script type="text/javascript">
-    $.get("/pot", function (data) {
-
-            data.forEach(item => {
-                let row = document.createElement('tr');
-                row.innerHTML = `
-<td>${item.img}</td>
-<td>${item.plant.name}</td>
-<td>${item.plant.name}</td>
-`;
-                document.querySelector("#garden").appendChild(row)
-            });
-        }
-    );
-
-    $.get("/plant/", function (data) {
-
-    });
-
-</script>
 
 <div class="container authenticated">
     <h3>My plants</h3>
@@ -63,22 +28,100 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <td>Img</td>
                 <td>Name</td>
+                <td>Water</td>
+                <td>Health</td>
                 <td>Action</td>
             </tr>
             </thead>
-            <tbody id="garden">
-
-            </tbody>
+            <tbody id="garden"></tbody>
         </table>
-        <form action="/pot/">
-            <input type="text">
-            <input type="submit" value="Add">
 
+        <form id="plantFlower" action="/pot">
+            <select id="plantsCatalog">
+                <option>Customize profile</option>
+            </select>
+            <input type="submit" value="Add">
         </form>
     </div>
 
 </div>
 </body>
+
+<script type="text/javascript">
+
+    $.get("/auth", function (data) {
+        $("#plantator").html(data.attributes.name);
+    });
+
+    $.get("/plant", function (result) {
+        $.each(result, function (k, v) {
+            $('#plantsCatalog').append(
+                $('<option/>', {'value': k, 'text': v.name})
+            );
+        });
+    });
+
+    function updatePots() {
+        $.get("/pot/", function (data) {
+                $("#garden").empty();
+                $.each(data, function (i, item) {
+                    addPotInTable(item);
+                })
+            }
+        );
+    }
+
+    updatePots();
+
+
+    $("#plantFlower").on("submit", function (event) {
+        // Stop form from submitting normally
+        event.preventDefault();
+        var selectedFlower = $("#plantsCatalog option:selected").text();
+        var url = $(this).attr("action") + "?flower=" + selectedFlower;
+
+        var posting = $.post(url);
+
+        posting.done(function (data) {
+            addPotInTable(data);
+        });
+    });
+
+
+    function addPotInTable(item) {
+        var $tr = $('<tr>').append(
+            $('<td>').text(item.name),
+            $('<td>').text(item.water),
+            $('<td>').text(item.health),
+            $('<td>').append(
+                $('<input type="button"/>').val("remove").on("click", function (event) {
+                    removePot(item.id)
+                    event.target.parentNode.parentElement.remove()
+                }),
+                $('<input type="button"/>').val("up water").on("click", function (event) {
+                    upWater(item.id)
+                }),
+            )
+        );
+        $("#garden").append($tr);
+    }
+
+    function removePot(id) {
+        $.ajax({
+            url: '/pot/' + id,
+            type: 'DELETE',
+            success: function (result) {
+                alert("delete" + id);
+            }
+        });
+    }
+
+    function upWater(id) {
+        alert("water" + id);
+        $.get("/pot/" + id + "/water", function (data) {
+            updatePots()
+        })
+    }
+</script>
 </html>

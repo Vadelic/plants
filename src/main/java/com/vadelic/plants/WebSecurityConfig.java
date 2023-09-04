@@ -21,13 +21,14 @@ public class WebSecurityConfig {
         return
                 http
                         .authorizeRequests()
-                        .antMatchers("/", "/error", "/webjars/**").permitAll()
-//                        .antMatchers("/garden/**", "/plant/**").permitAll()
-//                        .antMatchers(HttpMethod.POST, "/**").permitAll()
-                        .antMatchers("/*/**").authenticated()
+                        .anyRequest()
+                        .permitAll()
+//                        .antMatchers("/*/**").permitAll()
                         .and()
                         .oauth2Login()
                         .and().logout()
-                        .and().build();
+                        .and().securityContext()
+                        .and().csrf().disable()
+                        .build();
     }
 }

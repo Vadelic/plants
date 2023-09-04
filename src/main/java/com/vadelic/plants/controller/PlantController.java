@@ -19,7 +19,7 @@ public class PlantController {
     private final DTOMappingService mappingService;
 
 
-    @GetMapping("/")
+    @GetMapping()
     public List<PlantDTO> allPlants() {
         List<Plant> all = plantService.all();
 

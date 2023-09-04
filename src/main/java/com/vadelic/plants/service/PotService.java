@@ -21,12 +21,17 @@ public class PotService {
     public List<FlowerPot> allUsersPots(String login) {
         final List<Garden> usersGardens = gardenRepo.findAllByLogin(login);
         List<FlowerPot> allUsersFlower = potRepo.findAllByGardenIn(usersGardens);
-        log.info("User {}, Gardens {}, Flowers {}",login,usersGardens.size(),allUsersFlower.size());
+        log.info("User {}, Gardens {}, Flowers {}", login, usersGardens.size(), allUsersFlower.size());
         return allUsersFlower;
     }
 
     public FlowerPot setFlower(FlowerPot flowerPot) {
         log.info("Added flower {}", flowerPot);
         return potRepo.save(flowerPot);
+    }
+
+    public void delete(FlowerPot flowerPot) {
+        potRepo.delete(flowerPot);
+        log.info("deleted {}", flowerPot);
     }
 }
